@@ -5,6 +5,7 @@ extern crate router;
 extern crate image;
 
 use iron::{Iron, Request, Response, IronResult, IronError, Chain};
+use iron::mime::Mime;
 use iron::status;
 use router::{Router};
 
@@ -12,10 +13,6 @@ use logger::Logger;
 use std::path::{PathBuf};
 use std::fs;
 use std::io;
-use std::io::Cursor;
-use std::fs::File;
-
-use image::GenericImage;
 
 fn hello_world(_: &mut Request) -> IronResult<Response> {
     Ok(Response::with((iron::status::Ok, "Hi!")))
@@ -56,22 +53,13 @@ fn artwork(req: &mut Request) -> IronResult<Response> {
     };
 
     let thumb = img.resize(128, 128, image::FilterType::Triangle);
-    // let jpg_thumb: Vec<u8> = Vec::new();
-    // let cursor = Cursor::new(&mut jpg_thumb);
+    let mut buffer = vec![];
 
-    let mut thumbpath = filepath.clone();
-    let new_file_name = format!("{}.{}", thumbpath.file_name().unwrap().to_string_lossy(), variant);
-    thumbpath.set_file_name(new_file_name);
-    let (width, height) = thumb.dimensions();
-    println!("File ({}): {}, {}x{} -> {}", variant, filepath.to_string_lossy(), width, height, thumbpath.to_string_lossy());
-
-    let ref mut thumb_file = match File::create(&thumbpath) {
-        Ok(f) => f,
-        Err(e) => return Err(IronError::new(e, status::InternalServerError))
-    };
-
-    match thumb.save(thumb_file, image::JPEG) {
-        Ok(_) => Ok(Response::with((iron::status::Ok, thumbpath))),
+    match thumb.save(&mut buffer, image::JPEG) {
+        Ok(_) => {
+            let content_type = "image/jpeg".parse::<Mime>().unwrap();
+            Ok(Response::with((content_type, iron::status::Ok, buffer)))
+        },
         Err(e) => Err(IronError::new(e, status::InternalServerError))
     }
 }

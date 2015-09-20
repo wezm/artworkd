@@ -7,7 +7,6 @@ authors = ["Wesley Moore <wes@wezm.net>"]
 iron = "*"
 router = "*"
 image = "*"
-pipe = "*"
 
 [dependencies.logger]
 git = "https://github.com/iron/logger.git"
