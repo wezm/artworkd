@@ -1,0 +1,14 @@
+[package]
+name = "artworkd"
+version = "0.1.0"
+authors = ["Wesley Moore <wes@wezm.net>"]
+
+[dependencies]
+iron = "*"
+router = "*"
+image = "*"
+pipe = "*"
+
+[dependencies.logger]
+git = "https://github.com/iron/logger.git"
+
