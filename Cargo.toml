@@ -9,3 +9,6 @@ router = "*"
 image = "*"
 logger = "*"
 
+[dependencies.image-middleware]
+path = "/Users/wmoore/Projects/Musicast/image-middleware"
+
